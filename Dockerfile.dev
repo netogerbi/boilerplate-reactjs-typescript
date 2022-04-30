@@ -1,24 +1,27 @@
 # pull the base image
 FROM node:lts-alpine
 
+# add `/app/node_modules/.bin` to $PATH
+# ENV PATH /app/node_modules/.bin:$PATH
+
+# Install python/pip
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
+RUN apk add --update alpine-sdk
+
 # set the working direction
 WORKDIR /app
-
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY package.json ./
 
-COPY yarn.lock ./
-
-# rebuild node-sass
-RUN yarn add node-sass
-
 RUN yarn
 
 # add app
-COPY . ./
+COPY . .
 
 # start app
 CMD ["yarn", "start"]

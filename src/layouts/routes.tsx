@@ -1,18 +1,20 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
-import RouteValidate from '../components/RouteValidate';
+import PrivateRoute from '../components/PrivateRoute';
 import { App } from './app/pages';
 import { PageError401 } from './errors/401';
 
 const routes: React.FC = () => (
-  <Switch>
-    <Route path="/" exact component={App} />
-    <Route path="/error/401" component={PageError401} />
-    <Route path="/error/500" component={() => <h1>Error 500</h1>} />
+  <Routes>
+    <Route path="/" element={<App />} />
+    <Route path="/error/401" element={<PageError401 />} />
+    <Route path="/error/500" element={<h1>Error 500</h1>} />
 
-    <RouteValidate path="/admin" component={() => <h1>Page private admin</h1>} isPrivate />
-  </Switch>
+    <Route path="/admin" element={
+      <PrivateRoute component={<h1>Page private admin</h1>} />}
+    />
+  </Routes>
 );
 
 export default routes;

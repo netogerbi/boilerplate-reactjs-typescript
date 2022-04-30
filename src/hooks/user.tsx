@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { getAuthenticate } from '../services/api/domain/users/get-authenticate';
 
 interface UserProps {
@@ -13,6 +13,7 @@ interface UserProps {
 interface UserAuthenticatedProps {
   user: UserProps | null;
   token: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setUserAuthenticated: (user: any) => void;
   setTokenAuthenticated: (token: string) => void;
 }
@@ -27,6 +28,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }: UserProv
   const [userState, setUserState] = useState<UserProps | null>(null);
   const [tokenState, setTokenState] = useState<string>(() => sessionStorage.getItem('@token') as string);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setUserAuthenticated = (user: any) => setUserState(user);
 
   const setTokenAuthenticated = (token: string) => setTokenState(token);
@@ -43,14 +45,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }: UserProv
     loadUserInfo();
   }, []);
 
+  const val = useMemo(() => ({
+    user: userState,
+    token: tokenState,
+    setUserAuthenticated,
+    setTokenAuthenticated,
+  }), [])
+
   return (
     <UserContext.Provider
-      value={{
-        user: userState,
-        token: tokenState,
-        setUserAuthenticated,
-        setTokenAuthenticated,
-      }}
+      value={val}
     >
       {children}
     </UserContext.Provider>

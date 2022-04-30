@@ -7,8 +7,9 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     const token = sessionStorage.getItem('@token');
-    if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
-    return config;
+    return token && config.headers
+      ? { ...config, headers: { ...config.headers, Authorization: `Bearer ${token}` } }
+      : {};
   },
   (error) => {
     Promise.reject(error);
